@@ -1,0 +1,505 @@
+<!DOCTYPE html><html><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;"><meta http-equiv="x-dns-prefetch-control" content="off"><script src="https://puc.poecdn.net/authenticated_preview_page/standard.3ef2c256959faf5a756d.js"></script>
+    <meta charset="utf-8">
+    <title>Poe</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://puc.poecdn.net/authenticated_preview_page/disableWebRTC.9710cebe07429a9e8e06.js"></script><meta name="x-poe-allow-downloads" content="true"><meta name="x-poe-datastore-behavior" content="disabled"><script src="https://puc.poecdn.net/authenticated_preview_page/tw.b9024aecac666455e183.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/deps.faccd16000d314dc16d5.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/exports.b0f0f482cdeb5302b0b9.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/renderer.75c73ae6b4235f62945a.js"></script><script>Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; } function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }var _react = require('react'); var _react2 = _interopRequireDefault(_react);
+var _recharts = require('recharts');
+var _framermotion = require('framer-motion');
+var _lucidereact = require('lucide-react');
+
+const DIMS = [
+  { key: 'body', label: '身心能量' },
+  { key: 'order', label: '秩序空间' },
+  { key: 'conn', label: '亲密链接' },
+  { key: 'grow', label: '成长探索' },
+  { key: 'inner', label: '内在悦纳' },
+];
+const VALID_CODES = ['R98U-DDF5','LLDJ-FUAG','GGDL-PBSA','2WUR-5Y7T','X986-DVUJ'];
+
+const Q1 = [
+  { d:'body', t:'最近一个月，你对自己的睡眠质量满意吗？' },
+  { d:'order', t:'你的生活空间是否让你感到舒适有序？' },
+  { d:'conn', t:'你身边有可以说心里话的人吗？' },
+  { d:'grow', t:'你目前的工作或学习是否让你有成就感？' },
+  { d:'inner', t:'你能平静地接纳自己当下的状态吗？' },
+  { d:'body', t:'你每周会有规律地进行身体活动吗？' },
+  { d:'order', t:'你对自己目前的时间安排满意吗？' },
+  { d:'conn', t:'你对当前的亲密关系状态满意吗？' },
+  { d:'grow', t:'你最近半年有在学习新东西或探索新领域吗？' },
+  { d:'inner', t:'你独处时能感到自在和充实吗？' },
+  { d:'body', t:'你日常的精力水平能支撑你完成想做的事吗？' },
+  { d:'order', t:'你对当前的财务状况有清晰的掌控感吗？' },
+  { d:'conn', t:'你与亲近的人的关系是否给你带来滋养而非消耗？' },
+  { d:'grow', t:'你对自己当前的收入或经济能力满意吗？' },
+  { d:'inner', t:'最近一个月，你的情绪整体是稳定的吗？' },
+  { d:'body', t:'你是否有意识地关注自己的饮食和营养？' },
+  { d:'order', t:'你是否有稳定且让你舒服的日常节奏？' },
+  { d:'conn', t:'最近一个月，你有过被理解和被看见的对话吗？' },
+  { d:'grow', t:'你目前有正在认真追求的目标吗？' },
+  { d:'inner', t:'你觉得自己值得拥有好的生活和关系吗？' },
+  { d:'body', t:'当身体发出疲惫信号时，你能及时让自己休息吗？' },
+  { d:'order', t:'面对计划外的变动，你能比较从容地应对吗？' },
+  { d:'conn', t:'你在人际交往中能比较真实地表达自己吗？' },
+  { d:'grow', t:'你是否会主动接触不同的观点和圈子？' },
+  { d:'inner', t:'遭遇挫折后，你能比较快地找回内心的平衡吗？' },
+];
+const Q2 = [
+  { d:'body', t:'拥有充沛的体力和旺盛的精力，对你来说重要吗？' },
+  { d:'order', t:'你有多渴望一个井然有序的生活环境？' },
+  { d:'conn', t:'深度的人际关系对你来说有多重要？' },
+  { d:'grow', t:'在事业或专业上持续进步对你重要吗？' },
+  { d:'inner', t:'内心的安宁和平静对你有多重要？' },
+  { d:'body', t:'你有多渴望建立一套适合自己的健康习惯？' },
+  { d:'order', t:'拥有财务安全感是你强烈的内在需求吗？' },
+  { d:'conn', t:'你有多渴望在关系中被真正理解？' },
+  { d:'grow', t:'你有多渴望拓宽自己的认知边界？' },
+  { d:'inner', t:'你有多渴望能真正接纳和欣赏自己？' },
+  { d:'body', t:'如果只能优先改善一件事，"睡个好觉"会是你的选项吗？' },
+  { d:'order', t:'你有多希望自己能更好地规划时间？' },
+  { d:'conn', t:'拥有一个温暖的支持网络对你有吸引力吗？' },
+  { d:'grow', t:'提升创造收入的能力是你当前的驱动力吗？' },
+  { d:'inner', t:'提升情绪管理能力是你想努力的方向吗？' },
+  { d:'body', t:'通过提升身体状态来改善思维和情绪，这对你有吸引力吗？' },
+  { d:'order', t:'建立稳定的生活节奏和仪式感对你有吸引力吗？' },
+  { d:'conn', t:'你愿意为重要关系投入更多时间和精力吗？' },
+  { d:'grow', t:'学习一项全新的技能会让你感到兴奋吗？' },
+  { d:'inner', t:'你有多想拥有高质量的独处时光？' },
+  { d:'body', t:'你愿意把"照顾好身体"当作每日优先事项吗？' },
+  { d:'order', t:'你有多想减少生活中"失控"的感觉？' },
+  { d:'conn', t:'你觉得"爱与被爱的能力"是你的核心需求吗？' },
+  { d:'grow', t:'你有多想在某个领域做出属于自己的成绩？' },
+  { d:'inner', t:'"活出真实的自己"对你有多重要？' },
+];
+const O1 = ['完全不符合','比较不符合','说不好','比较符合','非常符合'];
+const O2 = ['几乎没想过','偶尔在意','有些向往','比较渴望','强烈渴望'];
+
+function calc(ans, qs) {
+  const s = {}, c = {};
+  DIMS.forEach(d => { s[d.key] = 0; c[d.key] = 0; });
+  qs.forEach((q, i) => { if (ans[i] > 0) { s[q.d] += ans[i]; c[q.d]++; } });
+  const o = {};
+  DIMS.forEach(d => { const a = c[d.key] > 0 ? s[d.key] / c[d.key] : 3; o[d.key] = Math.round((a - 1) / 4 * 100); });
+  return o;
+}
+function ana(s1, s2) {
+  const ks = DIMS.map(d => d.key);
+  const b1 = [...ks].sort((a, b) => s1[b] - s1[a]);
+  const b2 = [...ks].sort((a, b) => s2[b] - s2[a]);
+  const gaps = {}; ks.forEach(k => gaps[k] = s2[k] - s1[k]);
+  const bg = [...ks].sort((a, b) => gaps[b] - gaps[a]);
+  const s2v = ks.map(k => s2[k]);
+  return { strong: b1[0], weak: b1[4], drive: b2[0], gapDim: bg[0], gaps, bal: s1[b1[0]] - s1[b1[4]] <= 10, desireBal: Math.max(...s2v) - Math.min(...s2v) <= 15 };
+}
+const dl = k => _optionalChain([DIMS, 'access', _2 => _2.find, 'call', _3 => _3(d => d.key === k), 'optionalAccess', _4 => _4.label]) || '';
+
+function getType(s1, s2) {
+  const { drive } = ana(s1, s2);
+  const cl = s1[drive] >= 50 ? 'h' : 'l';
+  const v2 = Object.values(s2);
+  if (Math.max(...v2) - Math.min(...v2) <= 15) {
+    const av = Object.values(s1).reduce((a, b) => a + b, 0) / 5;
+    return av >= 55 ? { name: '全息行者', tag: '你已然拥有觉知的均衡，下一步是选择一个方向深入精进' } : { name: '生活炼金师', tag: '你渴望全面蜕变，每一个维度都在召唤你' };
+  }
+  const T = {
+    body: { h:{ name:'山间清泉', tag:'身心充盈是你的底色，你正从身体里汲取生命的力量' }, l:{ name:'沉睡巨鲸', tag:'你的身体里沉睡着巨大的能量，正等待一次温柔的唤醒' } },
+    order: { h:{ name:'时光钟表匠', tag:'秩序是你的安全感来源，你擅长在结构中找到自由' }, l:{ name:'混沌建筑师', tag:'你渴望从混沌中搭建属于自己的秩序宫殿' } },
+    conn: { h:{ name:'温暖磁场', tag:'你的世界因联结而丰盛，关系是你最重要的能量来源' }, l:{ name:'独行暖光', tag:'你心中有一团温暖的光，正在寻找值得照亮的人' } },
+    grow: { h:{ name:'星际领航员', tag:'成长是你的母语，你已经在通往星辰的航线上' }, l:{ name:'蛰伏火山', tag:'巨大的成长渴望正在你心中蓄积，即将迎来喷发时刻' } },
+    inner: { h:{ name:'静水深流', tag:'你的内心已有深厚的宁静，正在向更深处探索自我' }, l:{ name:'迷雾寻灯人', tag:'你正穿越情绪的迷雾，寻找属于自己的内心明灯' } },
+  };
+  return _optionalChain([T, 'access', _5 => _5[drive], 'optionalAccess', _6 => _6[cl]]) || { name: '探索者', tag: '你正在人生的旷野上寻找方向' };
+}
+
+function getInterp(s1, s2) {
+  const { strong, weak, drive, gapDim, gaps, bal, desireBal } = ana(s1, s2);
+  const av = Math.round(Object.values(s1).reduce((a, b) => a + b, 0) / 5);
+  const av2 = Math.round(Object.values(s2).reduce((a, b) => a + b, 0) / 5);
+  const allHigh = Object.values(s1).every(v => v >= 80);
+  let t = '';
+  if (allHigh && bal) {
+    t += '你在五个维度上都展现出了很高的满意度，拥有令人欣赏的生命质量。这种全面且稳定的状态非常难得，说明你已经在用心经营着一种高品质的生活。';
+  } else {
+    if (av >= 65) t += '你当前的整体生命能量处于较为充沛的状态，说明你已经在生活的多个层面建立了不错的基础，这非常值得肯定。';
+    else if (av >= 40) t += '你当前的整体能量处于中等水平，生活中有经营得不错的领域，也有需要关注的角落——这是大多数人的常态，请不要苛责自己。';
+    else t += '你当前的生命能量整体偏低，可能正经历一段消耗较大的时期。但请记住，愿意直面自己的状态，本身就是了不起的勇气。';
+    if (bal) { t += '你五个维度的现状得分相当均衡，没有特别突出的短板，同时也有一种整体跃升的可能性在等待你。'; }
+    else { t += `在五个维度中，「${dl(strong)}」是你当前最稳固的领域（${s1[strong]}分），它是你面对生活风浪时最坚实的锚点。而「${dl(weak)}」目前得分较低（${s1[weak]}分），可能是近期让你感到消耗或不安的主要来源，也是最值得投注关怀的方向。`; }
+  }
+  if (desireBal) {
+    if (av2 >= 80) t += '你对生活各维度都怀有强烈而均衡的渴望，你渴望的不是某个单点的突破，而是整体的生命蜕变。';
+    else t += '你对各个维度的渴望程度比较均衡，可以选择任何一个最顺手的维度作为起点。';
+  } else {
+    if (drive === strong) t += `值得注意的是，你最强的领域恰好也是你最在意的方向——你对「${dl(drive)}」既有积累又有热情，这是一种非常有力的组合，可以成为撬动其他改变的核心支点。`;
+    else t += `你内心最强烈的渴望指向「${dl(drive)}」（渴望值${s2[drive]}分），这股内驱力是推动你向前的关键能量。`;
+  }
+  const allGapsTiny = Object.values(gaps).every(g => g <= 5);
+  if (!desireBal && gaps[gapDim] > 25) t += `尤其在「${dl(gapDim)}」维度上，你的渴望远超现状，这里存在显著的成长空间——它既是你的痛点，也可能成为最大的突破口。`;
+  else if (allGapsTiny && av >= 75) t += '你的现状已经非常接近内心的期待，这是一种珍贵的踏实感。此刻的你，或许可以把眼光放得更远，去探索那些从未想象过的可能性。';
+  return t;
+}
+
+function getSugg(s1, s2) {
+  const allEqual = Object.values(s1).every(v => v === Object.values(s1)[0]);
+  if (allEqual && s1[DIMS[0].key] >= 80) {
+    return [
+      { title: '向更深处探索', text: '你的五个维度已经非常均衡且充实。这个阶段的成长不再是"补短板"，而是在某个最让你心动的方向上做深度突破。选择一个让你感到兴奋的领域，投入热情去精进——从"均衡的好"走向"有特色的卓越"。' },
+      { title: '成为他人的支点', text: '当自己的生命已经相当稳固，最有意义的下一步往往是向外延伸。你可以用自己的经验和能量去支持身边的人——分享你的方法、倾听他们的困惑、创造更多有质量的联结。' },
+      { title: '保持觉察与弹性', text: '高分并不意味着永远不会波动——生活本身就是动态的。保持对自己状态的温柔觉察，在波动来临时不焦虑、不自责，从容应对。你已经证明了自己有能力建设好的生活。' },
+    ];
+  }
+  const { strong, weak, drive } = ana(s1, s2);
+  const tips = {
+    body: { up: '从一个微小的身体习惯开始：每天10分钟散步、一个固定的入睡时间、或一顿认真准备的饭。当身体被好好对待，精力和心情都会悄然回升。', use: '你的身心能量是最大的资产。尝试用它带动其他领域——用晨间活动的清醒感启动高效工作，用好好吃饭来创造与人联结的时刻。' },
+    order: { up: '选择一个最困扰你的"混乱角落"开始：堆满东西的桌面、一团乱麻的日程、或从未理过的账目。秩序感像涟漪，从一个小小的圆心就能扩散到整个水面。', use: '你的秩序感是超能力。试着为最想改善的领域设计一个极简系统——追踪表、固定时间块、或小小的日常仪式。结构不是束缚，它是让自由生长的骨架。' },
+    conn: { up: '本周找一个你在意的人，进行一次不带手机的深度对话。联结不需要宏大的仪式，它在每一个真诚的"你最近好吗？"里悄然发生。', use: '关系是你最富足的领域。试着借助它滋养其他维度——和朋友一起运动、找志同道合的人共同学习、在信任的人面前练习表达脆弱。' },
+    grow: { up: '找到一件让你好奇的小事，给自己30天探索期。不必追求"有用"，不必急于看到结果。成长的引擎一旦启动，会自己找到加速的方向。', use: '你的成长动力是最强的发动机。关键是为它选择一条跑道——与其分散精力在多个方向，不如选定一个目标深扎三个月。' },
+    inner: { up: '每天给自己15分钟"纯粹独处"——不刷手机、不计划、不反思，只是安静地和自己待一会儿。也可以写三行日记：一个感受、一个发现、一句温柔的话。', use: '你的内在稳定性是最深的根基。试着把自我觉察带入想改善的领域——用正念面对焦虑，用自我接纳的心态开始学习，用内心的平静去经营关系。' },
+  };
+  const r = [];
+  r.push({ title: `以「${dl(strong)}」为支点`, text: _optionalChain([tips, 'access', _7 => _7[strong], 'optionalAccess', _8 => _8.use]) || '' });
+  if (weak !== strong) { r.push({ title: s1[weak] >= 80 ? `精进「${dl(weak)}」` : `补给「${dl(weak)}」的能量`, text: s1[weak] >= 80 ? (_optionalChain([tips, 'access', _9 => _9[weak], 'optionalAccess', _10 => _10.use]) || '') : (_optionalChain([tips, 'access', _11 => _11[weak], 'optionalAccess', _12 => _12.up]) || '') }); }
+  if (drive !== strong && drive !== weak) r.push({ title: `追随「${dl(drive)}」的召唤`, text: _optionalChain([tips, 'access', _13 => _13[drive], 'optionalAccess', _14 => _14.up]) || '' });
+  if (r.length < 3) r.push({ title: '给自己一些耐心', text: '改变不必一蹴而就。选择一个最让你心动的方向，用最小的行动开始，然后允许自己慢慢来。每一天微小的选择，都在为你建造一个不一样的未来。' });
+  return r;
+}
+
+function wrapText(ctx, text, maxW) {
+  const lines = []; let cur = '';
+  for (let i = 0; i < text.length; i++) {
+    const test = cur + text[i];
+    if (ctx.measureText(test).width > maxW) { lines.push(cur); cur = text[i]; } else cur = test;
+  }
+  if (cur) lines.push(cur); return lines;
+}
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+}
+
+function drawPoster(canvas, type, sc1, sc2, interp) {
+  const W = 750, PAD = 60;
+  const mc = document.createElement('canvas'); mc.width = W; mc.height = 1;
+  const mx = mc.getContext('2d');
+  mx.font = '400 20px Georgia,serif';
+  const tagLs = wrapText(mx, type.tag, W - 140);
+  mx.font = '400 14px Georgia,serif';
+  const allIL = wrapText(mx, interp, W - PAD * 2 - 40);
+  const iL = allIL.slice(0, 6); const hasMore = allIL.length > 6;
+  const iLC = iL.length + (hasMore ? 1 : 0);
+  let H = 48 + 24 + 40 + 44 + 32 + tagLs.length * 28 + 24 + 220 + 28 + 5 * 36 + 16 + iLC * 20 + 44 + 70;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#fef7ed'); bg.addColorStop(0.5, '#fffbf5'); bg.addColorStop(1, '#fef3e2');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  ctx.globalAlpha = 0.05; ctx.fillStyle = '#92400e';
+  ctx.beginPath(); ctx.arc(620, 150, 170, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(130, H - 180, 120, 0, Math.PI * 2); ctx.fill();
+  ctx.globalAlpha = 1;
+  let y = 48;
+  ctx.fillStyle = '#a8a29e'; ctx.font = '500 17px Georgia,serif'; ctx.textAlign = 'center';
+  ctx.fillText('MY LIFE FULCRUM · 2026', W / 2, y); y += 22;
+  ctx.strokeStyle = '#d6d3d1'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(W / 2 - 40, y); ctx.lineTo(W / 2 + 40, y); ctx.stroke(); y += 40;
+  ctx.fillStyle = '#292524'; ctx.font = '700 40px Georgia,serif'; ctx.fillText('「' + type.name + '」', W / 2, y); y += 32;
+  ctx.fillStyle = '#78716c'; ctx.font = '400 20px Georgia,serif';
+  tagLs.forEach((l, i) => ctx.fillText(l, W / 2, y + i * 28)); y += tagLs.length * 28 + 24;
+  const cx = W / 2, cy = y + 90, R = 82;
+  const angles = DIMS.map((_, i) => -Math.PI / 2 + (2 * Math.PI * i) / 5);
+  for (let r = 1; r <= 4; r++) { const rr = (R / 4) * r; ctx.strokeStyle = '#e7e5e4'; ctx.lineWidth = 1; ctx.beginPath(); angles.forEach((a, i) => { const px = cx + rr * Math.cos(a), py = cy + rr * Math.sin(a); i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); }); ctx.closePath(); ctx.stroke(); }
+  ctx.fillStyle = 'rgba(168,162,158,0.3)'; ctx.strokeStyle = '#a8a29e'; ctx.lineWidth = 2; ctx.beginPath();
+  DIMS.forEach((d, i) => { const v = sc1[d.key] / 100; const px = cx + R * v * Math.cos(angles[i]), py = cy + R * v * Math.sin(angles[i]); i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); });
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2; ctx.setLineDash([5, 3]); ctx.beginPath();
+  DIMS.forEach((d, i) => { const v = sc2[d.key] / 100; const px = cx + R * v * Math.cos(angles[i]), py = cy + R * v * Math.sin(angles[i]); i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); });
+  ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#57534e'; ctx.font = '400 14px Georgia,serif'; ctx.textAlign = 'center';
+  DIMS.forEach((d, i) => { const lR = R + 20; ctx.fillText(d.label, cx + lR * Math.cos(angles[i]), cy + lR * Math.sin(angles[i]) + 5); });
+  y = cy + R + 38;
+  ctx.font = '400 12px Georgia,serif'; ctx.fillStyle = '#a8a29e'; ctx.fillRect(W / 2 - 80, y - 2, 10, 2);
+  ctx.fillText('现状', W / 2 - 58, y + 1); ctx.strokeStyle = '#b45309'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 2]);
+  ctx.beginPath(); ctx.moveTo(W / 2 + 16, y - 1); ctx.lineTo(W / 2 + 26, y - 1); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#b45309'; ctx.fillText('渴望', W / 2 + 44, y + 1); y += 22;
+  const bL = 150, bMaxW = W - 230, bH = 7, bRow = 36;
+  DIMS.forEach((d, i) => {
+    const ry = y + i * bRow; const cur = sc1[d.key]; const des = sc2[d.key]; const gap = Math.max(des - cur, 0);
+    ctx.fillStyle = '#57534e'; ctx.font = '500 14px Georgia,serif'; ctx.textAlign = 'right'; ctx.fillText(d.label, bL - 10, ry + 7);
+    ctx.save(); ctx.fillStyle = '#f5f5f4'; roundRect(ctx, bL, ry, bMaxW, bH, 3.5); ctx.fill(); ctx.clip();
+    ctx.fillStyle = '#a8a29e'; ctx.fillRect(bL, ry, Math.max((cur / 100) * bMaxW, 1), bH);
+    if (gap > 0) { ctx.fillStyle = '#fbbf24'; ctx.fillRect(bL + (cur / 100) * bMaxW, ry, (gap / 100) * bMaxW, bH); }
+    ctx.restore();
+    ctx.fillStyle = '#78716c'; ctx.font = '600 11px Georgia,serif'; ctx.textAlign = 'left';
+    ctx.fillText(`${cur} / ${des}`, bL + bMaxW + 8, ry + 7);
+  });
+  y += 5 * bRow + 14;
+  const iCardP = 18; const iLnH = 20; const iCardH = iLC * iLnH + iCardP * 2;
+  ctx.fillStyle = '#ffffff'; ctx.globalAlpha = 0.9; roundRect(ctx, PAD, y, W - PAD * 2, iCardH, 10); ctx.fill(); ctx.globalAlpha = 1;
+  ctx.fillStyle = '#57534e'; ctx.font = '400 14px Georgia,serif'; ctx.textAlign = 'left';
+  iL.forEach((l, i) => ctx.fillText(l, PAD + iCardP, y + iCardP + 13 + i * iLnH));
+  if (hasMore) ctx.fillText('……', PAD + iCardP, y + iCardP + 13 + iL.length * iLnH);
+  y += iCardH + 18;
+  ctx.strokeStyle = '#d6d3d1'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(W / 2 - 50, y); ctx.lineTo(W / 2 + 50, y); ctx.stroke(); y += 22;
+  ctx.fillStyle = '#a8a29e'; ctx.font = '400 13px Georgia,serif'; ctx.textAlign = 'center'; ctx.fillText('寻找你的生命支点 · 2026', W / 2, y); y += 18;
+  ctx.fillStyle = '#c4b5a3'; ctx.font = '400 11px Georgia,serif'; ctx.fillText('© 安清酉 AnQingYou', W / 2, y);
+}
+
+function PosterModal({ type, sc1, sc2, interp, onClose }) {
+  const canvasRef = _react.useRef.call(void 0, null);
+  const [imgUrl, setImgUrl] = _react.useState.call(void 0, null);
+  _react.useEffect.call(void 0, () => { const c = canvasRef.current; if (c) { drawPoster(c, type, sc1, sc2, interp); setImgUrl(c.toDataURL('image/png')); } }, [type, sc1, sc2, interp]);
+  return (
+    _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, className: "fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4"        , onClick: onClose,}
+      , _react2.default.createElement(_framermotion.motion.div, { initial: { scale: 0.9, opacity: 0 }, animate: { scale: 1, opacity: 1 }, exit: { scale: 0.9, opacity: 0 }, transition: { type: 'spring', damping: 25 }, className: "bg-white rounded-2xl overflow-hidden max-w-sm w-full max-h-screen flex flex-col"       , onClick: e => e.stopPropagation(),}
+        , _react2.default.createElement('div', { className: "flex items-center justify-between px-5 py-3 border-b border-stone-100"      ,}
+          , _react2.default.createElement('span', { className: "text-sm font-semibold text-stone-700"  , style: { fontFamily: "'Noto Serif SC',Georgia,serif" },}, "我的生命支点")
+          , _react2.default.createElement('button', { onClick: onClose, className: "text-stone-400 hover:text-stone-600" ,}, _react2.default.createElement(_lucidereact.X, { size: 20,} ))
+        )
+        , _react2.default.createElement('div', { className: "overflow-y-auto flex-1 p-3 bg-stone-50"   ,}
+          , _react2.default.createElement('canvas', { ref: canvasRef, className: "hidden",} )
+          , imgUrl && _react2.default.createElement('img', { src: imgUrl, alt: "poster", className: "w-full rounded-xl shadow-lg"  ,} )
+        )
+        , _react2.default.createElement('div', { className: "px-5 py-3 border-t border-stone-100"   ,}
+          , _react2.default.createElement('button', { onClick: () => { if (!imgUrl) return; const a = document.createElement('a'); a.href = imgUrl; a.download = '我的生命支点.png'; a.click(); }, className: "w-full flex items-center justify-center gap-2 bg-stone-800 text-amber-50 py-3 rounded-full text-sm tracking-widest hover:bg-stone-700 transition-colors"            , style: { fontFamily: "'Noto Serif SC',Georgia,serif" },}
+            , _react2.default.createElement(_lucidereact.Download, { size: 16,} ), " 保存海报"
+          )
+          , _react2.default.createElement('p', { className: "text-center text-xs text-stone-400 mt-2"   , style: { fontFamily: "'Noto Serif SC',Georgia,serif" },}, "长按图片也可保存到相册")
+        )
+      )
+    )
+  );
+}
+
+ function App() {
+  const [page, setPage] = _react.useState.call(void 0, 'cover');
+  const [qi, setQi] = _react.useState.call(void 0, 0);
+  const [a1, setA1] = _react.useState.call(void 0, Array(25).fill(0));
+  const [a2, setA2] = _react.useState.call(void 0, Array(25).fill(0));
+  const [dir, setDir] = _react.useState.call(void 0, 1);
+  const [showPoster, setShowPoster] = _react.useState.call(void 0, false);
+  const [codeInput, setCodeInput] = _react.useState.call(void 0, '');
+  const [codeError, setCodeError] = _react.useState.call(void 0, false);
+  const tmr = _react.useRef.call(void 0, null);
+  const F = "'Noto Serif SC','Songti SC',Georgia,'Times New Roman',serif";
+
+  _react.useEffect.call(void 0, () => { const l = document.createElement('link'); l.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap'; l.rel = 'stylesheet'; document.head.appendChild(l); }, []);
+  _react.useEffect.call(void 0, () => { window.scrollTo(0, 0); }, [page]);
+
+  const phase = page === 'phase1' ? 1 : page === 'phase2' ? 2 : 0;
+  const qs = phase === 1 ? Q1 : Q2;
+  const ans = phase === 1 ? a1 : a2;
+  const opts = phase === 1 ? O1 : O2;
+  const sc1 = _react.useMemo.call(void 0, () => calc(a1, Q1), [a1]);
+  const sc2 = _react.useMemo.call(void 0, () => calc(a2, Q2), [a2]);
+
+  const pick = (v) => {
+    if (tmr.current) clearTimeout(tmr.current);
+    if (phase === 1) setA1(p => { const n = [...p]; n[qi] = v; return n; });
+    else setA2(p => { const n = [...p]; n[qi] = v; return n; });
+    tmr.current = setTimeout(() => {
+      setDir(1);
+      if (qi < 24) setQi(qi + 1);
+      else if (phase === 1) { setPage('transition'); setQi(0); }
+      else setPage('result');
+    }, 380);
+  };
+  const back = () => { if (tmr.current) clearTimeout(tmr.current); setDir(-1); if (qi > 0) setQi(qi - 1); else if (phase === 2) setPage('transition'); };
+  const restart = () => { setPage('cover'); setQi(0); setA1(Array(25).fill(0)); setA2(Array(25).fill(0)); setCodeInput(''); setCodeError(false); };
+  const validateCode = () => { const t = codeInput.trim().toUpperCase(); if (VALID_CODES.includes(t)) { setPage('phase1'); setCodeError(false); } else setCodeError(true); };
+
+  return (
+    _react2.default.createElement('div', { style: { fontFamily: F }, className: "bg-amber-50 text-stone-800" ,}
+
+      , page === 'cover' && (
+        _react2.default.createElement('div', { className: "min-h-screen flex items-center justify-center px-6"    ,}
+          , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 30 }, animate: { opacity: 1, y: 0 }, transition: { duration: 1 }, className: "text-center max-w-xs" ,}
+            , _react2.default.createElement('div', { className: "text-6xl mb-8" ,}, "⚖️")
+            , _react2.default.createElement('h1', { className: "text-3xl font-bold tracking-widest leading-snug"   ,}, "寻找你的", _react2.default.createElement('br', null ), "生命支点")
+            , _react2.default.createElement('p', { className: "text-xs text-stone-400 tracking-widest mt-3 mb-10"    ,}, "2026 · LIFE FULCRUM"   )
+            , _react2.default.createElement('div', { className: "w-8 h-px bg-stone-300 mx-auto mb-8"    ,} )
+            , _react2.default.createElement('p', { className: "text-stone-500 leading-loose mb-10"  ,}, "每段人生"
+              , _react2.default.createElement('br', null ), "都有一个隐秘的支点", _react2.default.createElement('br', null ), "找到它", _react2.default.createElement('br', null )
+              , _react2.default.createElement('span', { className: "font-semibold text-stone-700" ,}, "轻轻一推，一切开始松动")
+            )
+            , _react2.default.createElement('p', { className: "text-sm text-stone-400 leading-loose mb-10"   ,}, "50 道问题" , _react2.default.createElement('br', null ), "帮你看见此刻的位置", _react2.default.createElement('br', null ), "也看见你真正渴望的方向")
+            , _react2.default.createElement('button', { onClick: () => setPage('redeem'), className: "bg-stone-800 text-amber-50 px-10 py-3.5 rounded-full tracking-widest hover:bg-stone-700 transition-colors shadow-xl"        ,}, "开始探索")
+            , _react2.default.createElement('p', { className: "mt-8 text-xs text-stone-400"  ,}, "约 5–8 分钟 · 诚实面对自己 · 没有标准答案"      )
+          )
+        )
+      )
+
+      , page === 'redeem' && (
+        _react2.default.createElement('div', { className: "min-h-screen flex items-center justify-center px-6"    ,}
+          , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6 }, className: "text-center max-w-xs w-full"  ,}
+            , _react2.default.createElement('div', { className: "mb-6 flex justify-center"  ,}, _react2.default.createElement('div', { className: "w-14 h-14 rounded-full bg-stone-100 flex items-center justify-center"      ,}, _react2.default.createElement(_lucidereact.Lock, { size: 24, className: "text-stone-400",} )))
+            , _react2.default.createElement('h2', { className: "text-2xl font-bold mb-3 tracking-wide"   ,}, "输入兑换码")
+            , _react2.default.createElement('p', { className: "text-sm text-stone-500 leading-relaxed mb-8"   ,}, "请输入你的专属兑换码以解锁测试")
+            , _react2.default.createElement(_framermotion.motion.div, { animate: codeError ? { x: [-8, 8, -8, 8, 0] } : { x: 0 }, transition: { duration: 0.35 },}
+              , _react2.default.createElement('input', { type: "text", value: codeInput, onChange: e => { setCodeInput(e.target.value.toUpperCase()); setCodeError(false); }, onKeyDown: e => { if (e.key === 'Enter') validateCode(); }, placeholder: "XXXX-XXXX", maxLength: 9, className: "w-full text-center text-xl tracking-widest bg-transparent border-b-2 border-stone-300 py-3 outline-none focus:border-stone-600 transition-colors placeholder-stone-300"           , style: { fontFamily: "'Courier New',Consolas,monospace" },} )
+            )
+            , codeError && _react2.default.createElement(_framermotion.motion.p, { initial: { opacity: 0, y: -5 }, animate: { opacity: 1, y: 0 }, className: "text-red-400 text-sm mt-3"  ,}, "兑换码无效，请检查后重试")
+            , _react2.default.createElement('button', { onClick: validateCode, className: "w-full mt-8 bg-stone-800 text-amber-50 py-3.5 rounded-full tracking-widest hover:bg-stone-700 transition-colors shadow-xl"         ,}, "验证并开始")
+            , _react2.default.createElement('div', { className: "w-8 h-px bg-stone-200 mx-auto mt-8 mb-5"     ,} )
+            , _react2.default.createElement('a', { href: "https://xhslink.com/m/9zlRIGza06v", target: "_blank", rel: "noopener noreferrer" , className: "text-sm text-amber-700 hover:text-amber-900 transition-colors"   ,}, "还没有兑换码？", _react2.default.createElement('span', { className: "underline underline-offset-4" ,}, "点此获取"), " →" )
+            , _react2.default.createElement('button', { onClick: () => setPage('cover'), className: "block mx-auto mt-6 text-xs text-stone-400 hover:text-stone-600 transition-colors"      ,}, "← 返回首页" )
+          )
+        )
+      )
+
+      , page === 'transition' && (
+        _react2.default.createElement('div', { className: "min-h-screen flex items-center justify-center px-6"    ,}
+          , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.7 }, className: "text-center max-w-xs" ,}
+            , _react2.default.createElement(_framermotion.motion.div, { className: "w-16 h-16 rounded-full bg-amber-100 mx-auto mb-8 flex items-center justify-center"        , animate: { scale: [1, 1.12, 1] }, transition: { duration: 4, repeat: Infinity, ease: 'easeInOut' },}
+              , _react2.default.createElement(_framermotion.motion.div, { className: "w-7 h-7 rounded-full bg-amber-200"   , animate: { scale: [1, 0.85, 1] }, transition: { duration: 4, repeat: Infinity, ease: 'easeInOut' },} )
+            )
+            , _react2.default.createElement('h2', { className: "text-2xl font-bold mb-6"  ,}, "第一阶段完成")
+            , _react2.default.createElement('p', { className: "text-stone-500 leading-loose mb-3"  ,}, "你已经诚实地面对了当下的自己")
+            , _react2.default.createElement('p', { className: "text-stone-400 text-sm leading-relaxed mb-10"   ,}, "深呼吸一次", _react2.default.createElement('br', null ), "接下来，让我们听听内心的声音——", _react2.default.createElement('br', null ), _react2.default.createElement('span', { className: "font-semibold text-stone-700" ,}, "你真正渴望的，是什么？"))
+            , _react2.default.createElement('button', { onClick: () => { setPage('phase2'); setQi(0); setDir(1); }, className: "w-full bg-stone-800 text-amber-50 py-3.5 rounded-full tracking-widest hover:bg-stone-700 transition-colors shadow-xl mb-3"         ,}, "进入第二阶段")
+            , _react2.default.createElement('button', { onClick: () => { setPage('phase1'); setQi(24); setDir(-1); }, className: "w-full text-stone-400 text-sm py-2 hover:text-stone-600 transition-colors"     ,}, "← 返回修改第一阶段" )
+          )
+        )
+      )
+
+      , (page === 'phase1' || page === 'phase2') && (() => {
+        const q = qs[qi]; const total = phase === 1 ? qi + 1 : 25 + qi + 1; const pct = total / 50 * 100;
+        const pLabel = phase === 1 ? '第一阶段 · 现状扫描' : '第二阶段 · 内心罗盘';
+        const dim = DIMS.find(d => d.key === q.d);
+        return (
+          _react2.default.createElement('div', { className: "min-h-screen flex flex-col"  ,}
+            , _react2.default.createElement('div', { className: "px-5 pt-5 pb-3"  ,}
+              , _react2.default.createElement('div', { className: "flex items-center justify-between mb-3"   ,}
+                , _react2.default.createElement('button', { onClick: back, disabled: phase === 1 && qi === 0, className: "flex items-center gap-1 text-stone-400 hover:text-stone-600 disabled:opacity-20 transition-colors text-sm"       ,}, _react2.default.createElement(_lucidereact.ChevronLeft, { size: 18,} ), " 上一题" )
+                , _react2.default.createElement('span', { className: "text-xs text-stone-400 tracking-wider"  ,}, total, " / 50"  )
+              )
+              , _react2.default.createElement('div', { className: "w-full h-1 bg-stone-200 rounded-full overflow-hidden"    ,}, _react2.default.createElement(_framermotion.motion.div, { className: "h-full rounded-full bg-stone-500"  , initial: false, animate: { width: `${pct}%` }, transition: { duration: 0.35 },} ))
+              , _react2.default.createElement('p', { className: "text-xs text-stone-400 mt-2.5 text-center tracking-widest"    ,}, pLabel)
+            )
+            , _react2.default.createElement('div', { className: "flex-1 flex flex-col items-center justify-center px-6 pb-10"      ,}
+              , _react2.default.createElement(_framermotion.AnimatePresence, { mode: "wait",}
+                , _react2.default.createElement(_framermotion.motion.div, { key: `${page}-${qi}`, initial: { opacity: 0, x: dir * 50 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: dir * -50 }, transition: { duration: 0.22 }, className: "w-full max-w-sm text-center"  ,}
+                  , _react2.default.createElement('p', { className: "text-xs tracking-widest mb-3 text-amber-700"   ,}, _optionalChain([dim, 'optionalAccess', _15 => _15.label]))
+                  , _react2.default.createElement('h3', { className: "text-lg font-medium leading-relaxed mb-10 px-2"    ,}, q.t)
+                  , _react2.default.createElement('div', { className: "space-y-2.5",}
+                    , opts.map((label, i) => { const v = i + 1; const sel = ans[qi] === v; return (
+                      _react2.default.createElement('button', { key: v, onClick: () => pick(v), className: `w-full py-3 px-5 rounded-xl border text-sm transition-all duration-200 ${sel ? 'border-stone-700 bg-stone-800 text-amber-50 font-medium shadow-md' : 'border-stone-200 bg-white text-stone-600 hover:border-stone-400'}`,}, label)
+                    ); })
+                  )
+                )
+              )
+            )
+          )
+        );
+      })()
+
+      , page === 'result' && (() => {
+        const type = getType(sc1, sc2);
+        const interp = getInterp(sc1, sc2);
+        const sugg = getSugg(sc1, sc2);
+        const data = DIMS.map(d => ({ dim: d.label, '现状': sc1[d.key], '渴望': sc2[d.key] }));
+        const { gapDim, gaps } = ana(sc1, sc2);
+        const maxGap = gaps[gapDim];
+        return (
+          _react2.default.createElement('div', { className: "pb-16",}
+            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.8 }, className: "bg-gradient-to-b from-amber-100 to-amber-50 pt-14 pb-10 px-6 text-center"      ,}
+              , _react2.default.createElement('p', { className: "text-xs tracking-widest text-stone-400 mb-4"   ,}, "YOUR LIFE FULCRUM TYPE"   )
+              , _react2.default.createElement('div', { className: "w-8 h-px bg-stone-300 mx-auto mb-5"    ,} )
+              , _react2.default.createElement('h2', { className: "text-4xl font-bold mb-5 tracking-wide"   ,}, "「", type.name, "」")
+              , _react2.default.createElement('p', { className: "text-sm text-stone-600 leading-relaxed max-w-xs mx-auto"    ,}, type.tag)
+            )
+
+            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.6 }, className: "px-4 pt-8 pb-2"  ,}
+              , _react2.default.createElement('h3', { className: "text-center font-semibold mb-1"  ,}, "能量全景")
+              , _react2.default.createElement('p', { className: "text-center text-xs text-stone-400 mb-3"   ,}, "灰色 = 现状 · 金色虚线 = 渴望"      )
+              , _react2.default.createElement('div', { className: "w-full h-72" ,}
+                , _react2.default.createElement(_recharts.ResponsiveContainer, null
+                  , _react2.default.createElement(_recharts.RadarChart, { data: data, cx: "50%", cy: "50%", outerRadius: "65%",}
+                    , _react2.default.createElement(_recharts.PolarGrid, { stroke: "#d6d3d1",} )
+                    , _react2.default.createElement(_recharts.PolarAngleAxis, { dataKey: "dim", tick: { fontSize: 12, fill: '#57534e' },} )
+                    , _react2.default.createElement(_recharts.PolarRadiusAxis, { angle: 90, domain: [0, 100], tick: false, axisLine: false,} )
+                    , _react2.default.createElement(_recharts.Radar, { name: "现状", dataKey: "现状", stroke: "#a8a29e", fill: "#a8a29e", fillOpacity: 0.35, strokeWidth: 2,} )
+                    , _react2.default.createElement(_recharts.Radar, { name: "渴望", dataKey: "渴望", stroke: "#b45309", fill: "#fbbf24", fillOpacity: 0.1, strokeWidth: 2.5, strokeDasharray: "6 3" ,} )
+                    , _react2.default.createElement(_recharts.Legend, { wrapperStyle: { fontSize: 11, paddingTop: 4 },} )
+                  )
+                )
+              )
+            )
+
+            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5 }, className: "px-5 mb-6" ,}
+              , _react2.default.createElement('h3', { className: "font-semibold mb-3 tracking-wide text-sm"   ,}, "五维对照")
+              , _react2.default.createElement('div', { className: "bg-white rounded-2xl p-5 shadow-sm"   ,}
+                , _react2.default.createElement('div', { className: "flex items-center justify-center gap-6 mb-5"    ,}
+                  , _react2.default.createElement('span', { className: "flex items-center gap-2 text-xs text-stone-500"    ,}, _react2.default.createElement('span', { className: "w-2.5 h-2.5 rounded-full bg-stone-400 inline-block"    ,} ), " 现状" )
+                  , _react2.default.createElement('span', { className: "flex items-center gap-2 text-xs text-amber-600"    ,}, _react2.default.createElement('span', { className: "w-2.5 h-2.5 bg-amber-500 inline-block"   , style: { transform: 'rotate(45deg)' },} ), " 渴望" )
+                )
+                , _react2.default.createElement('div', { className: "space-y-5",}
+                  , DIMS.map((d, idx) => {
+                    const cur = sc1[d.key], des = sc2[d.key], gap = Math.max(des - cur, 0);
+                    return (
+                      _react2.default.createElement('div', { key: d.key,}
+                        , _react2.default.createElement('div', { className: "flex items-center justify-between mb-2"   ,}
+                          , _react2.default.createElement('span', { className: "text-sm font-medium text-stone-700"  ,}, d.label)
+                          , _react2.default.createElement('div', { className: "text-xs",}, _react2.default.createElement('span', { className: "text-stone-500 font-semibold" ,}, cur), _react2.default.createElement('span', { className: "text-stone-300 mx-1" ,}, "/"), _react2.default.createElement('span', { className: "text-amber-600 font-semibold" ,}, des))
+                        )
+                        , _react2.default.createElement('div', { className: "relative h-5" ,}
+                          , _react2.default.createElement('div', { className: "absolute top-1/2 left-0 right-0 h-px bg-stone-200"     , style: { transform: 'translateY(-50%)' },} )
+                          , [0, 25, 50, 75, 100].map(v => _react2.default.createElement('div', { key: v, className: "absolute w-px h-2 bg-stone-200"   , style: { left: `${v}%`, top: '50%', transform: 'translate(-50%,-50%)' },} ))
+                          , gap > 0 && _react2.default.createElement(_framermotion.motion.div, { className: "absolute h-0.5 bg-amber-200"  , style: { left: `${cur}%`, top: '50%', transform: 'translateY(-50%)' }, initial: { width: 0 }, whileInView: { width: `${gap}%` }, viewport: { once: true }, transition: { duration: 0.6, delay: idx * 0.08 + 0.3 },} )
+                          , _react2.default.createElement(_framermotion.motion.div, { className: "absolute w-3 h-3 rounded-full bg-stone-500 border-2 border-white shadow-sm"       , style: { left: `${cur}%`, top: '50%', transform: 'translate(-50%,-50%)' }, initial: { scale: 0 }, whileInView: { scale: 1 }, viewport: { once: true }, transition: { type: 'spring', delay: idx * 0.08 },} )
+                          , _react2.default.createElement(_framermotion.motion.div, { className: "absolute w-2.5 h-2.5 bg-amber-500 border-2 border-white shadow-sm"      , style: { left: `${des}%`, top: '50%', transform: 'translate(-50%,-50%) rotate(45deg)' }, initial: { scale: 0 }, whileInView: { scale: 1 }, viewport: { once: true }, transition: { type: 'spring', delay: idx * 0.08 + 0.15 },} )
+                        )
+                      )
+                    );
+                  })
+                )
+              )
+              , maxGap > 10 && (
+                _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 10 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.4, delay: 0.5 }, className: "bg-amber-50 border border-amber-200 rounded-xl p-4 mt-3"     ,}
+                  , _react2.default.createElement('p', { className: "text-sm text-amber-800" ,}, _react2.default.createElement('span', { className: "font-semibold",}, "💡 关键发现：" ), "「", dl(gapDim), "」是你现状与渴望差距最大的维度（差距 " , maxGap, " 分），这可能是撬动改变最有力的切入点。" )
+                )
+              )
+            )
+
+            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5 }, className: "px-5 mb-8" ,}
+              , _react2.default.createElement('h3', { className: "font-semibold mb-3 tracking-wide"  ,}, "核心解读")
+              , _react2.default.createElement('div', { className: "bg-white rounded-2xl p-5 shadow-sm"   ,}, _react2.default.createElement('p', { className: "text-sm leading-loose text-stone-600"  ,}, interp))
+            )
+
+            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5 }, className: "px-5 mb-10" ,}
+              , _react2.default.createElement('h3', { className: "font-semibold mb-3 tracking-wide"  ,}, "撬动改变的第一步")
+              , _react2.default.createElement('div', { className: "space-y-3",}, sugg.map((s, i) => (
+                _react2.default.createElement('div', { key: i, className: "bg-white rounded-2xl p-5 shadow-sm"   ,}
+                  , _react2.default.createElement('p', { className: "font-medium text-sm mb-2 text-amber-800"   ,}, s.title)
+                  , _react2.default.createElement('p', { className: "text-sm leading-loose text-stone-600"  ,}, s.text)
+                )
+              )))
+            )
+
+            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { duration: 0.5 }, className: "px-5 text-center" ,}
+              , _react2.default.createElement('div', { className: "border-t border-stone-200 pt-8 mb-4"   ,}
+                , _react2.default.createElement('div', { className: "flex gap-3 justify-center"  ,}
+                  , _react2.default.createElement('button', { onClick: () => setShowPoster(true), className: "flex-1 max-w-40 flex items-center justify-center gap-2 bg-stone-800 text-amber-50 py-3 rounded-full text-sm tracking-widest hover:bg-stone-700 transition-colors shadow-lg"              ,}, _react2.default.createElement(_lucidereact.Share2, { size: 15,} ), " 生成海报" )
+                  , _react2.default.createElement('button', { onClick: restart, className: "flex-1 max-w-40 flex items-center justify-center gap-2 border border-stone-300 text-stone-600 py-3 rounded-full text-sm tracking-widest hover:bg-stone-100 transition-colors"              ,}, _react2.default.createElement(_lucidereact.RotateCcw, { size: 15,} ), " 重新探索" )
+                )
+              )
+              , _react2.default.createElement('p', { className: "text-xs text-stone-400 mt-4"  ,}, "⚠️ 刷新页面后结果将丢失，建议先保存海报" )
+              , _react2.default.createElement('div', { className: "w-8 h-px bg-stone-300 mx-auto mb-4 mt-4"     ,} )
+              , _react2.default.createElement('p', { className: "text-xs text-stone-400 tracking-wider"  ,}, "寻找你的生命支点 · 2026"  )
+              , _react2.default.createElement('p', { className: "text-xs text-stone-300 mt-1.5 tracking-wider"   ,}, "© 安清酉 AnQingYou"  )
+            )
+
+            , _react2.default.createElement(_framermotion.AnimatePresence, null
+              , showPoster && _react2.default.createElement(PosterModal, { type: getType(sc1, sc2), sc1: sc1, sc2: sc2, interp: getInterp(sc1, sc2), onClose: () => setShowPoster(false),} )
+            )
+          )
+        );
+      })()
+    )
+  );
+} exports.default = App;
+</script></head>
+  <body>
+  
+
+<div id="preview-app"></div></body></html>
