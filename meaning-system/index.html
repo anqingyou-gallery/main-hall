@@ -1,18 +1,14 @@
-<!DOCTYPE html><html><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;"><meta http-equiv="x-dns-prefetch-control" content="off"><script src="https://puc.poecdn.net/authenticated_preview_page/standard.3ef2c256959faf5a756d.js"></script>
-    <meta charset="utf-8">
-    <title>Poe</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-  <script src="https://puc.poecdn.net/authenticated_preview_page/disableWebRTC.9710cebe07429a9e8e06.js"></script><meta name="x-poe-allow-downloads" content="true"><meta name="x-poe-datastore-behavior" content="disabled"><script src="https://puc.poecdn.net/authenticated_preview_page/tw.b9024aecac666455e183.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/deps.faccd16000d314dc16d5.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/exports.b0f0f482cdeb5302b0b9.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/renderer.75c73ae6b4235f62945a.js"></script><script>Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; } function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }var _react = require('react'); var _react2 = _interopRequireDefault(_react);
-var _recharts = require('recharts');
-var _framermotion = require('framer-motion');
-var _lucidereact = require('lucide-react');
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } from 'recharts';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, RotateCcw, Share2, X, Download, Lock, ChevronDown, ChevronUp } from 'lucide-react';
 
 const DIMS = [
-  { key: 'body', label: '身心能量' },
-  { key: 'order', label: '秩序空间' },
-  { key: 'conn', label: '亲密链接' },
-  { key: 'grow', label: '成长探索' },
-  { key: 'inner', label: '内在悦纳' },
+  { key: 'body', label: '身心能量', desc: '睡眠质量 · 体力精力 · 运动习惯 · 饮食营养 · 身体觉察' },
+  { key: 'order', label: '秩序空间', desc: '环境整洁 · 时间管理 · 财务掌控 · 日常节奏 · 应变从容' },
+  { key: 'conn', label: '亲密链接', desc: '深度关系 · 被理解感 · 真实表达 · 情感滋养 · 社交支持' },
+  { key: 'grow', label: '成长探索', desc: '成就感 · 持续学习 · 目标驱动 · 经济能力 · 视野拓展' },
+  { key: 'inner', label: '内在悦纳', desc: '自我接纳 · 情绪稳定 · 独处质量 · 自我价值 · 复原韧性' },
 ];
 const VALID_CODES = ['R98U-DDF5','LLDJ-FUAG','GGDL-PBSA','2WUR-5Y7T','X986-DVUJ'];
 
@@ -90,7 +86,7 @@ function ana(s1, s2) {
   const s2v = ks.map(k => s2[k]);
   return { strong: b1[0], weak: b1[4], drive: b2[0], gapDim: bg[0], gaps, bal: s1[b1[0]] - s1[b1[4]] <= 10, desireBal: Math.max(...s2v) - Math.min(...s2v) <= 15 };
 }
-const dl = k => _optionalChain([DIMS, 'access', _2 => _2.find, 'call', _3 => _3(d => d.key === k), 'optionalAccess', _4 => _4.label]) || '';
+const dl = k => DIMS.find(d => d.key === k)?.label || '';
 
 function getType(s1, s2) {
   const { drive } = ana(s1, s2);
@@ -107,7 +103,7 @@ function getType(s1, s2) {
     grow: { h:{ name:'星际领航员', tag:'成长是你的母语，你已经在通往星辰的航线上' }, l:{ name:'蛰伏火山', tag:'巨大的成长渴望正在你心中蓄积，即将迎来喷发时刻' } },
     inner: { h:{ name:'静水深流', tag:'你的内心已有深厚的宁静，正在向更深处探索自我' }, l:{ name:'迷雾寻灯人', tag:'你正穿越情绪的迷雾，寻找属于自己的内心明灯' } },
   };
-  return _optionalChain([T, 'access', _5 => _5[drive], 'optionalAccess', _6 => _6[cl]]) || { name: '探索者', tag: '你正在人生的旷野上寻找方向' };
+  return T[drive]?.[cl] || { name: '探索者', tag: '你正在人生的旷野上寻找方向' };
 }
 
 function getInterp(s1, s2) {
@@ -132,9 +128,7 @@ function getInterp(s1, s2) {
     if (drive === strong) t += `值得注意的是，你最强的领域恰好也是你最在意的方向——你对「${dl(drive)}」既有积累又有热情，这是一种非常有力的组合，可以成为撬动其他改变的核心支点。`;
     else t += `你内心最强烈的渴望指向「${dl(drive)}」（渴望值${s2[drive]}分），这股内驱力是推动你向前的关键能量。`;
   }
-  const allGapsTiny = Object.values(gaps).every(g => g <= 5);
   if (!desireBal && gaps[gapDim] > 25) t += `尤其在「${dl(gapDim)}」维度上，你的渴望远超现状，这里存在显著的成长空间——它既是你的痛点，也可能成为最大的突破口。`;
-  else if (allGapsTiny && av >= 75) t += '你的现状已经非常接近内心的期待，这是一种珍贵的踏实感。此刻的你，或许可以把眼光放得更远，去探索那些从未想象过的可能性。';
   return t;
 }
 
@@ -156,9 +150,9 @@ function getSugg(s1, s2) {
     inner: { up: '每天给自己15分钟"纯粹独处"——不刷手机、不计划、不反思，只是安静地和自己待一会儿。也可以写三行日记：一个感受、一个发现、一句温柔的话。', use: '你的内在稳定性是最深的根基。试着把自我觉察带入想改善的领域——用正念面对焦虑，用自我接纳的心态开始学习，用内心的平静去经营关系。' },
   };
   const r = [];
-  r.push({ title: `以「${dl(strong)}」为支点`, text: _optionalChain([tips, 'access', _7 => _7[strong], 'optionalAccess', _8 => _8.use]) || '' });
-  if (weak !== strong) { r.push({ title: s1[weak] >= 80 ? `精进「${dl(weak)}」` : `补给「${dl(weak)}」的能量`, text: s1[weak] >= 80 ? (_optionalChain([tips, 'access', _9 => _9[weak], 'optionalAccess', _10 => _10.use]) || '') : (_optionalChain([tips, 'access', _11 => _11[weak], 'optionalAccess', _12 => _12.up]) || '') }); }
-  if (drive !== strong && drive !== weak) r.push({ title: `追随「${dl(drive)}」的召唤`, text: _optionalChain([tips, 'access', _13 => _13[drive], 'optionalAccess', _14 => _14.up]) || '' });
+  r.push({ title: `以「${dl(strong)}」为支点`, text: tips[strong]?.use || '' });
+  if (weak !== strong) { r.push({ title: s1[weak] >= 80 ? `精进「${dl(weak)}」` : `补给「${dl(weak)}」的能量`, text: s1[weak] >= 80 ? (tips[weak]?.use || '') : (tips[weak]?.up || '') }); }
+  if (drive !== strong && drive !== weak) r.push({ title: `追随「${dl(drive)}」的召唤`, text: tips[drive]?.up || '' });
   if (r.length < 3) r.push({ title: '给自己一些耐心', text: '改变不必一蹴而就。选择一个最让你心动的方向，用最小的行动开始，然后允许自己慢慢来。每一天微小的选择，都在为你建造一个不一样的未来。' });
   return r;
 }
@@ -246,52 +240,81 @@ function drawPoster(canvas, type, sc1, sc2, interp) {
 }
 
 function PosterModal({ type, sc1, sc2, interp, onClose }) {
-  const canvasRef = _react.useRef.call(void 0, null);
-  const [imgUrl, setImgUrl] = _react.useState.call(void 0, null);
-  _react.useEffect.call(void 0, () => { const c = canvasRef.current; if (c) { drawPoster(c, type, sc1, sc2, interp); setImgUrl(c.toDataURL('image/png')); } }, [type, sc1, sc2, interp]);
+  const canvasRef = useRef(null);
+  const [imgUrl, setImgUrl] = useState(null);
+  useEffect(() => { const c = canvasRef.current; if (c) { drawPoster(c, type, sc1, sc2, interp); setImgUrl(c.toDataURL('image/png')); } }, [type, sc1, sc2, interp]);
   return (
-    _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, className: "fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4"        , onClick: onClose,}
-      , _react2.default.createElement(_framermotion.motion.div, { initial: { scale: 0.9, opacity: 0 }, animate: { scale: 1, opacity: 1 }, exit: { scale: 0.9, opacity: 0 }, transition: { type: 'spring', damping: 25 }, className: "bg-white rounded-2xl overflow-hidden max-w-sm w-full max-h-screen flex flex-col"       , onClick: e => e.stopPropagation(),}
-        , _react2.default.createElement('div', { className: "flex items-center justify-between px-5 py-3 border-b border-stone-100"      ,}
-          , _react2.default.createElement('span', { className: "text-sm font-semibold text-stone-700"  , style: { fontFamily: "'Noto Serif SC',Georgia,serif" },}, "我的生命支点")
-          , _react2.default.createElement('button', { onClick: onClose, className: "text-stone-400 hover:text-stone-600" ,}, _react2.default.createElement(_lucidereact.X, { size: 20,} ))
-        )
-        , _react2.default.createElement('div', { className: "overflow-y-auto flex-1 p-3 bg-stone-50"   ,}
-          , _react2.default.createElement('canvas', { ref: canvasRef, className: "hidden",} )
-          , imgUrl && _react2.default.createElement('img', { src: imgUrl, alt: "poster", className: "w-full rounded-xl shadow-lg"  ,} )
-        )
-        , _react2.default.createElement('div', { className: "px-5 py-3 border-t border-stone-100"   ,}
-          , _react2.default.createElement('button', { onClick: () => { if (!imgUrl) return; const a = document.createElement('a'); a.href = imgUrl; a.download = '我的生命支点.png'; a.click(); }, className: "w-full flex items-center justify-center gap-2 bg-stone-800 text-amber-50 py-3 rounded-full text-sm tracking-widest hover:bg-stone-700 transition-colors"            , style: { fontFamily: "'Noto Serif SC',Georgia,serif" },}
-            , _react2.default.createElement(_lucidereact.Download, { size: 16,} ), " 保存海报"
-          )
-          , _react2.default.createElement('p', { className: "text-center text-xs text-stone-400 mt-2"   , style: { fontFamily: "'Noto Serif SC',Georgia,serif" },}, "长按图片也可保存到相册")
-        )
-      )
-    )
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4" onClick={onClose}>
+      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ type: 'spring', damping: 25 }} className="bg-white rounded-2xl overflow-hidden max-w-sm w-full max-h-screen flex flex-col" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 py-3 border-b border-stone-100">
+          <span className="text-sm font-semibold text-stone-700" style={{ fontFamily: "'Noto Serif SC',Georgia,serif" }}>我的生命支点</span>
+          <button onClick={onClose} className="text-stone-400 hover:text-stone-600"><X size={20} /></button>
+        </div>
+        <div className="overflow-y-auto flex-1 p-3 bg-stone-50">
+          <canvas ref={canvasRef} className="hidden" />
+          {imgUrl && <img src={imgUrl} alt="poster" className="w-full rounded-xl shadow-lg" />}
+        </div>
+        <div className="px-5 py-3 border-t border-stone-100">
+          <button onClick={() => { if (!imgUrl) return; const a = document.createElement('a'); a.href = imgUrl; a.download = '我的生命支点.png'; a.click(); }} className="w-full flex items-center justify-center gap-2 bg-stone-800 text-amber-50 py-3 rounded-full text-sm tracking-widest hover:bg-stone-700 transition-colors" style={{ fontFamily: "'Noto Serif SC',Georgia,serif" }}>
+            <Download size={16} /> 保存海报
+          </button>
+          <p className="text-center text-xs text-stone-400 mt-2" style={{ fontFamily: "'Noto Serif SC',Georgia,serif" }}>长按图片也可保存到相册</p>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
- function App() {
-  const [page, setPage] = _react.useState.call(void 0, 'cover');
-  const [qi, setQi] = _react.useState.call(void 0, 0);
-  const [a1, setA1] = _react.useState.call(void 0, Array(25).fill(0));
-  const [a2, setA2] = _react.useState.call(void 0, Array(25).fill(0));
-  const [dir, setDir] = _react.useState.call(void 0, 1);
-  const [showPoster, setShowPoster] = _react.useState.call(void 0, false);
-  const [codeInput, setCodeInput] = _react.useState.call(void 0, '');
-  const [codeError, setCodeError] = _react.useState.call(void 0, false);
-  const tmr = _react.useRef.call(void 0, null);
+function DimGuide({ dims }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mx-5 mb-5">
+      <button onClick={() => setOpen(!open)} className="flex items-center gap-1.5 text-xs text-stone-400 hover:text-stone-600 transition-colors mx-auto">
+        <span>五个维度分别包含什么？</span>
+        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden">
+            <div className="mt-3 bg-white rounded-2xl p-5 shadow-sm space-y-3">
+              {dims.map(d => (
+                <div key={d.key} className="flex items-start gap-3">
+                  <span className="text-sm font-semibold text-stone-700 whitespace-nowrap pt-px">{d.label}</span>
+                  <span className="text-xs text-stone-400 leading-relaxed pt-0.5">{d.desc}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+export default function App() {
+  const [page, setPage] = useState('cover');
+  const [qi, setQi] = useState(0);
+  const [a1, setA1] = useState(Array(25).fill(0));
+  const [a2, setA2] = useState(Array(25).fill(0));
+  const [dir, setDir] = useState(1);
+  const [showPoster, setShowPoster] = useState(false);
+  const [codeInput, setCodeInput] = useState('');
+  const [codeError, setCodeError] = useState(false);
+  const tmr = useRef(null);
   const F = "'Noto Serif SC','Songti SC',Georgia,'Times New Roman',serif";
 
-  _react.useEffect.call(void 0, () => { const l = document.createElement('link'); l.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap'; l.rel = 'stylesheet'; document.head.appendChild(l); }, []);
-  _react.useEffect.call(void 0, () => { window.scrollTo(0, 0); }, [page]);
+  useEffect(() => {
+    const l = document.createElement('link'); l.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap'; l.rel = 'stylesheet'; document.head.appendChild(l);
+    document.title = '2026：寻找你的生命支点';
+  }, []);
+  useEffect(() => { window.scrollTo(0, 0); }, [page]);
 
   const phase = page === 'phase1' ? 1 : page === 'phase2' ? 2 : 0;
   const qs = phase === 1 ? Q1 : Q2;
   const ans = phase === 1 ? a1 : a2;
   const opts = phase === 1 ? O1 : O2;
-  const sc1 = _react.useMemo.call(void 0, () => calc(a1, Q1), [a1]);
-  const sc2 = _react.useMemo.call(void 0, () => calc(a2, Q2), [a2]);
+  const sc1 = useMemo(() => calc(a1, Q1), [a1]);
+  const sc2 = useMemo(() => calc(a2, Q2), [a2]);
 
   const pick = (v) => {
     if (tmr.current) clearTimeout(tmr.current);
@@ -309,91 +332,91 @@ function PosterModal({ type, sc1, sc2, interp, onClose }) {
   const validateCode = () => { const t = codeInput.trim().toUpperCase(); if (VALID_CODES.includes(t)) { setPage('phase1'); setCodeError(false); } else setCodeError(true); };
 
   return (
-    _react2.default.createElement('div', { style: { fontFamily: F }, className: "bg-amber-50 text-stone-800" ,}
+    <div style={{ fontFamily: F }} className="bg-amber-50 text-stone-800">
 
-      , page === 'cover' && (
-        _react2.default.createElement('div', { className: "min-h-screen flex items-center justify-center px-6"    ,}
-          , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 30 }, animate: { opacity: 1, y: 0 }, transition: { duration: 1 }, className: "text-center max-w-xs" ,}
-            , _react2.default.createElement('div', { className: "text-6xl mb-8" ,}, "⚖️")
-            , _react2.default.createElement('h1', { className: "text-3xl font-bold tracking-widest leading-snug"   ,}, "寻找你的", _react2.default.createElement('br', null ), "生命支点")
-            , _react2.default.createElement('p', { className: "text-xs text-stone-400 tracking-widest mt-3 mb-10"    ,}, "2026 · LIFE FULCRUM"   )
-            , _react2.default.createElement('div', { className: "w-8 h-px bg-stone-300 mx-auto mb-8"    ,} )
-            , _react2.default.createElement('p', { className: "text-stone-500 leading-loose mb-10"  ,}, "每段人生"
-              , _react2.default.createElement('br', null ), "都有一个隐秘的支点", _react2.default.createElement('br', null ), "找到它", _react2.default.createElement('br', null )
-              , _react2.default.createElement('span', { className: "font-semibold text-stone-700" ,}, "轻轻一推，一切开始松动")
-            )
-            , _react2.default.createElement('p', { className: "text-sm text-stone-400 leading-loose mb-10"   ,}, "50 道问题" , _react2.default.createElement('br', null ), "帮你看见此刻的位置", _react2.default.createElement('br', null ), "也看见你真正渴望的方向")
-            , _react2.default.createElement('button', { onClick: () => setPage('redeem'), className: "bg-stone-800 text-amber-50 px-10 py-3.5 rounded-full tracking-widest hover:bg-stone-700 transition-colors shadow-xl"        ,}, "开始探索")
-            , _react2.default.createElement('p', { className: "mt-8 text-xs text-stone-400"  ,}, "约 5–8 分钟 · 诚实面对自己 · 没有标准答案"      )
-          )
-        )
-      )
+      {page === 'cover' && (
+        <div className="min-h-screen flex items-center justify-center px-6">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="text-center max-w-xs">
+            <div className="text-6xl mb-8">⚖️</div>
+            <h1 className="text-3xl font-bold tracking-widest leading-snug">寻找你的<br />生命支点</h1>
+            <p className="text-xs text-stone-400 tracking-widest mt-3 mb-10">2026 · LIFE FULCRUM</p>
+            <div className="w-8 h-px bg-stone-300 mx-auto mb-8" />
+            <p className="text-stone-500 leading-loose mb-10">
+              每段人生<br />都有一个隐秘的支点<br />找到它<br />
+              <span className="font-semibold text-stone-700">轻轻一推，一切开始松动</span>
+            </p>
+            <p className="text-sm text-stone-400 leading-loose mb-10">50 道问题<br />帮你看见此刻的位置<br />也看见你真正渴望的方向</p>
+            <button onClick={() => setPage('redeem')} className="bg-stone-800 text-amber-50 px-10 py-3.5 rounded-full tracking-widest hover:bg-stone-700 transition-colors shadow-xl">开始探索</button>
+            <p className="mt-8 text-xs text-stone-400">约 5–8 分钟 · 诚实面对自己 · 没有标准答案</p>
+          </motion.div>
+        </div>
+      )}
 
-      , page === 'redeem' && (
-        _react2.default.createElement('div', { className: "min-h-screen flex items-center justify-center px-6"    ,}
-          , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6 }, className: "text-center max-w-xs w-full"  ,}
-            , _react2.default.createElement('div', { className: "mb-6 flex justify-center"  ,}, _react2.default.createElement('div', { className: "w-14 h-14 rounded-full bg-stone-100 flex items-center justify-center"      ,}, _react2.default.createElement(_lucidereact.Lock, { size: 24, className: "text-stone-400",} )))
-            , _react2.default.createElement('h2', { className: "text-2xl font-bold mb-3 tracking-wide"   ,}, "输入兑换码")
-            , _react2.default.createElement('p', { className: "text-sm text-stone-500 leading-relaxed mb-8"   ,}, "请输入你的专属兑换码以解锁测试")
-            , _react2.default.createElement(_framermotion.motion.div, { animate: codeError ? { x: [-8, 8, -8, 8, 0] } : { x: 0 }, transition: { duration: 0.35 },}
-              , _react2.default.createElement('input', { type: "text", value: codeInput, onChange: e => { setCodeInput(e.target.value.toUpperCase()); setCodeError(false); }, onKeyDown: e => { if (e.key === 'Enter') validateCode(); }, placeholder: "XXXX-XXXX", maxLength: 9, className: "w-full text-center text-xl tracking-widest bg-transparent border-b-2 border-stone-300 py-3 outline-none focus:border-stone-600 transition-colors placeholder-stone-300"           , style: { fontFamily: "'Courier New',Consolas,monospace" },} )
-            )
-            , codeError && _react2.default.createElement(_framermotion.motion.p, { initial: { opacity: 0, y: -5 }, animate: { opacity: 1, y: 0 }, className: "text-red-400 text-sm mt-3"  ,}, "兑换码无效，请检查后重试")
-            , _react2.default.createElement('button', { onClick: validateCode, className: "w-full mt-8 bg-stone-800 text-amber-50 py-3.5 rounded-full tracking-widest hover:bg-stone-700 transition-colors shadow-xl"         ,}, "验证并开始")
-            , _react2.default.createElement('div', { className: "w-8 h-px bg-stone-200 mx-auto mt-8 mb-5"     ,} )
-            , _react2.default.createElement('a', { href: "https://xhslink.com/m/9zlRIGza06v", target: "_blank", rel: "noopener noreferrer" , className: "text-sm text-amber-700 hover:text-amber-900 transition-colors"   ,}, "还没有兑换码？", _react2.default.createElement('span', { className: "underline underline-offset-4" ,}, "点此获取"), " →" )
-            , _react2.default.createElement('button', { onClick: () => setPage('cover'), className: "block mx-auto mt-6 text-xs text-stone-400 hover:text-stone-600 transition-colors"      ,}, "← 返回首页" )
-          )
-        )
-      )
+      {page === 'redeem' && (
+        <div className="min-h-screen flex items-center justify-center px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center max-w-xs w-full">
+            <div className="mb-6 flex justify-center"><div className="w-14 h-14 rounded-full bg-stone-100 flex items-center justify-center"><Lock size={24} className="text-stone-400" /></div></div>
+            <h2 className="text-2xl font-bold mb-3 tracking-wide">输入兑换码</h2>
+            <p className="text-sm text-stone-500 leading-relaxed mb-8">请输入你的专属兑换码以解锁测试</p>
+            <motion.div animate={codeError ? { x: [-8, 8, -8, 8, 0] } : { x: 0 }} transition={{ duration: 0.35 }}>
+              <input type="text" value={codeInput} onChange={e => { setCodeInput(e.target.value.toUpperCase()); setCodeError(false); }} onKeyDown={e => { if (e.key === 'Enter') validateCode(); }} placeholder="XXXX-XXXX" maxLength={9} className="w-full text-center text-xl tracking-widest bg-transparent border-b-2 border-stone-300 py-3 outline-none focus:border-stone-600 transition-colors placeholder-stone-300" style={{ fontFamily: "'Courier New',Consolas,monospace" }} />
+            </motion.div>
+            {codeError && <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-red-400 text-sm mt-3">兑换码无效，请检查后重试</motion.p>}
+            <button onClick={validateCode} className="w-full mt-8 bg-stone-800 text-amber-50 py-3.5 rounded-full tracking-widest hover:bg-stone-700 transition-colors shadow-xl">验证并开始</button>
+            <div className="w-8 h-px bg-stone-200 mx-auto mt-8 mb-5" />
+            <a href="https://xhslink.com/m/9zlRIGza06v" target="_blank" rel="noopener noreferrer" className="text-sm text-amber-700 hover:text-amber-900 transition-colors">还没有兑换码？<span className="underline underline-offset-4">点此获取</span> →</a>
+            <button onClick={() => setPage('cover')} className="block mx-auto mt-6 text-xs text-stone-400 hover:text-stone-600 transition-colors">← 返回首页</button>
+          </motion.div>
+        </div>
+      )}
 
-      , page === 'transition' && (
-        _react2.default.createElement('div', { className: "min-h-screen flex items-center justify-center px-6"    ,}
-          , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.7 }, className: "text-center max-w-xs" ,}
-            , _react2.default.createElement(_framermotion.motion.div, { className: "w-16 h-16 rounded-full bg-amber-100 mx-auto mb-8 flex items-center justify-center"        , animate: { scale: [1, 1.12, 1] }, transition: { duration: 4, repeat: Infinity, ease: 'easeInOut' },}
-              , _react2.default.createElement(_framermotion.motion.div, { className: "w-7 h-7 rounded-full bg-amber-200"   , animate: { scale: [1, 0.85, 1] }, transition: { duration: 4, repeat: Infinity, ease: 'easeInOut' },} )
-            )
-            , _react2.default.createElement('h2', { className: "text-2xl font-bold mb-6"  ,}, "第一阶段完成")
-            , _react2.default.createElement('p', { className: "text-stone-500 leading-loose mb-3"  ,}, "你已经诚实地面对了当下的自己")
-            , _react2.default.createElement('p', { className: "text-stone-400 text-sm leading-relaxed mb-10"   ,}, "深呼吸一次", _react2.default.createElement('br', null ), "接下来，让我们听听内心的声音——", _react2.default.createElement('br', null ), _react2.default.createElement('span', { className: "font-semibold text-stone-700" ,}, "你真正渴望的，是什么？"))
-            , _react2.default.createElement('button', { onClick: () => { setPage('phase2'); setQi(0); setDir(1); }, className: "w-full bg-stone-800 text-amber-50 py-3.5 rounded-full tracking-widest hover:bg-stone-700 transition-colors shadow-xl mb-3"         ,}, "进入第二阶段")
-            , _react2.default.createElement('button', { onClick: () => { setPage('phase1'); setQi(24); setDir(-1); }, className: "w-full text-stone-400 text-sm py-2 hover:text-stone-600 transition-colors"     ,}, "← 返回修改第一阶段" )
-          )
-        )
-      )
+      {page === 'transition' && (
+        <div className="min-h-screen flex items-center justify-center px-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="text-center max-w-xs">
+            <motion.div className="w-16 h-16 rounded-full bg-amber-100 mx-auto mb-8 flex items-center justify-center" animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}>
+              <motion.div className="w-7 h-7 rounded-full bg-amber-200" animate={{ scale: [1, 0.85, 1] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }} />
+            </motion.div>
+            <h2 className="text-2xl font-bold mb-6">第一阶段完成</h2>
+            <p className="text-stone-500 leading-loose mb-3">你已经诚实地面对了当下的自己</p>
+            <p className="text-stone-400 text-sm leading-relaxed mb-10">深呼吸一次<br />接下来，让我们听听内心的声音——<br /><span className="font-semibold text-stone-700">你真正渴望的，是什么？</span></p>
+            <button onClick={() => { setPage('phase2'); setQi(0); setDir(1); }} className="w-full bg-stone-800 text-amber-50 py-3.5 rounded-full tracking-widest hover:bg-stone-700 transition-colors shadow-xl mb-3">进入第二阶段</button>
+            <button onClick={() => { setPage('phase1'); setQi(24); setDir(-1); }} className="w-full text-stone-400 text-sm py-2 hover:text-stone-600 transition-colors">← 返回修改第一阶段</button>
+          </motion.div>
+        </div>
+      )}
 
-      , (page === 'phase1' || page === 'phase2') && (() => {
+      {(page === 'phase1' || page === 'phase2') && (() => {
         const q = qs[qi]; const total = phase === 1 ? qi + 1 : 25 + qi + 1; const pct = total / 50 * 100;
         const pLabel = phase === 1 ? '第一阶段 · 现状扫描' : '第二阶段 · 内心罗盘';
         const dim = DIMS.find(d => d.key === q.d);
         return (
-          _react2.default.createElement('div', { className: "min-h-screen flex flex-col"  ,}
-            , _react2.default.createElement('div', { className: "px-5 pt-5 pb-3"  ,}
-              , _react2.default.createElement('div', { className: "flex items-center justify-between mb-3"   ,}
-                , _react2.default.createElement('button', { onClick: back, disabled: phase === 1 && qi === 0, className: "flex items-center gap-1 text-stone-400 hover:text-stone-600 disabled:opacity-20 transition-colors text-sm"       ,}, _react2.default.createElement(_lucidereact.ChevronLeft, { size: 18,} ), " 上一题" )
-                , _react2.default.createElement('span', { className: "text-xs text-stone-400 tracking-wider"  ,}, total, " / 50"  )
-              )
-              , _react2.default.createElement('div', { className: "w-full h-1 bg-stone-200 rounded-full overflow-hidden"    ,}, _react2.default.createElement(_framermotion.motion.div, { className: "h-full rounded-full bg-stone-500"  , initial: false, animate: { width: `${pct}%` }, transition: { duration: 0.35 },} ))
-              , _react2.default.createElement('p', { className: "text-xs text-stone-400 mt-2.5 text-center tracking-widest"    ,}, pLabel)
-            )
-            , _react2.default.createElement('div', { className: "flex-1 flex flex-col items-center justify-center px-6 pb-10"      ,}
-              , _react2.default.createElement(_framermotion.AnimatePresence, { mode: "wait",}
-                , _react2.default.createElement(_framermotion.motion.div, { key: `${page}-${qi}`, initial: { opacity: 0, x: dir * 50 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: dir * -50 }, transition: { duration: 0.22 }, className: "w-full max-w-sm text-center"  ,}
-                  , _react2.default.createElement('p', { className: "text-xs tracking-widest mb-3 text-amber-700"   ,}, _optionalChain([dim, 'optionalAccess', _15 => _15.label]))
-                  , _react2.default.createElement('h3', { className: "text-lg font-medium leading-relaxed mb-10 px-2"    ,}, q.t)
-                  , _react2.default.createElement('div', { className: "space-y-2.5",}
-                    , opts.map((label, i) => { const v = i + 1; const sel = ans[qi] === v; return (
-                      _react2.default.createElement('button', { key: v, onClick: () => pick(v), className: `w-full py-3 px-5 rounded-xl border text-sm transition-all duration-200 ${sel ? 'border-stone-700 bg-stone-800 text-amber-50 font-medium shadow-md' : 'border-stone-200 bg-white text-stone-600 hover:border-stone-400'}`,}, label)
-                    ); })
-                  )
-                )
-              )
-            )
-          )
+          <div className="min-h-screen flex flex-col">
+            <div className="px-5 pt-5 pb-3">
+              <div className="flex items-center justify-between mb-3">
+                <button onClick={back} disabled={phase === 1 && qi === 0} className="flex items-center gap-1 text-stone-400 hover:text-stone-600 disabled:opacity-20 transition-colors text-sm"><ChevronLeft size={18} /> 上一题</button>
+                <span className="text-xs text-stone-400 tracking-wider">{total} / 50</span>
+              </div>
+              <div className="w-full h-1 bg-stone-200 rounded-full overflow-hidden"><motion.div className="h-full rounded-full bg-stone-500" initial={false} animate={{ width: `${pct}%` }} transition={{ duration: 0.35 }} /></div>
+              <p className="text-xs text-stone-400 mt-2.5 text-center tracking-widest">{pLabel}</p>
+            </div>
+            <div className="flex-1 flex flex-col items-center justify-center px-6 pb-10">
+              <AnimatePresence mode="wait">
+                <motion.div key={`${page}-${qi}`} initial={{ opacity: 0, x: dir * 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: dir * -50 }} transition={{ duration: 0.22 }} className="w-full max-w-sm text-center">
+                  <p className="text-xs tracking-widest mb-3 text-amber-700">{dim?.label}</p>
+                  <h3 className="text-lg font-medium leading-relaxed mb-10 px-2">{q.t}</h3>
+                  <div className="space-y-2.5">
+                    {opts.map((label, i) => { const v = i + 1; const sel = ans[qi] === v; return (
+                      <button key={v} onClick={() => pick(v)} className={`w-full py-3 px-5 rounded-xl border text-sm transition-all duration-200 ${sel ? 'border-stone-700 bg-stone-800 text-amber-50 font-medium shadow-md' : 'border-stone-200 bg-white text-stone-600 hover:border-stone-400'}`}>{label}</button>
+                    ); })}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
         );
-      })()
+      })()}
 
-      , page === 'result' && (() => {
+      {page === 'result' && (() => {
         const type = getType(sc1, sc2);
         const interp = getInterp(sc1, sc2);
         const sugg = getSugg(sc1, sc2);
@@ -401,105 +424,105 @@ function PosterModal({ type, sc1, sc2, interp, onClose }) {
         const { gapDim, gaps } = ana(sc1, sc2);
         const maxGap = gaps[gapDim];
         return (
-          _react2.default.createElement('div', { className: "pb-16",}
-            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.8 }, className: "bg-gradient-to-b from-amber-100 to-amber-50 pt-14 pb-10 px-6 text-center"      ,}
-              , _react2.default.createElement('p', { className: "text-xs tracking-widest text-stone-400 mb-4"   ,}, "YOUR LIFE FULCRUM TYPE"   )
-              , _react2.default.createElement('div', { className: "w-8 h-px bg-stone-300 mx-auto mb-5"    ,} )
-              , _react2.default.createElement('h2', { className: "text-4xl font-bold mb-5 tracking-wide"   ,}, "「", type.name, "」")
-              , _react2.default.createElement('p', { className: "text-sm text-stone-600 leading-relaxed max-w-xs mx-auto"    ,}, type.tag)
-            )
+          <div className="pb-16">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }} className="bg-gradient-to-b from-amber-100 to-amber-50 pt-14 pb-10 px-6 text-center">
+              <p className="text-xs tracking-widest text-stone-400 mb-4">YOUR LIFE FULCRUM TYPE</p>
+              <div className="w-8 h-px bg-stone-300 mx-auto mb-5" />
+              <h2 className="text-4xl font-bold mb-5 tracking-wide">「{type.name}」</h2>
+              <p className="text-sm text-stone-600 leading-relaxed max-w-xs mx-auto">{type.tag}</p>
+            </motion.div>
 
-            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.6 }, className: "px-4 pt-8 pb-2"  ,}
-              , _react2.default.createElement('h3', { className: "text-center font-semibold mb-1"  ,}, "能量全景")
-              , _react2.default.createElement('p', { className: "text-center text-xs text-stone-400 mb-3"   ,}, "灰色 = 现状 · 金色虚线 = 渴望"      )
-              , _react2.default.createElement('div', { className: "w-full h-72" ,}
-                , _react2.default.createElement(_recharts.ResponsiveContainer, null
-                  , _react2.default.createElement(_recharts.RadarChart, { data: data, cx: "50%", cy: "50%", outerRadius: "65%",}
-                    , _react2.default.createElement(_recharts.PolarGrid, { stroke: "#d6d3d1",} )
-                    , _react2.default.createElement(_recharts.PolarAngleAxis, { dataKey: "dim", tick: { fontSize: 12, fill: '#57534e' },} )
-                    , _react2.default.createElement(_recharts.PolarRadiusAxis, { angle: 90, domain: [0, 100], tick: false, axisLine: false,} )
-                    , _react2.default.createElement(_recharts.Radar, { name: "现状", dataKey: "现状", stroke: "#a8a29e", fill: "#a8a29e", fillOpacity: 0.35, strokeWidth: 2,} )
-                    , _react2.default.createElement(_recharts.Radar, { name: "渴望", dataKey: "渴望", stroke: "#b45309", fill: "#fbbf24", fillOpacity: 0.1, strokeWidth: 2.5, strokeDasharray: "6 3" ,} )
-                    , _react2.default.createElement(_recharts.Legend, { wrapperStyle: { fontSize: 11, paddingTop: 4 },} )
-                  )
-                )
-              )
-            )
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="px-4 pt-8 pb-2">
+              <h3 className="text-center font-semibold mb-1">能量全景</h3>
+              <p className="text-center text-xs text-stone-400 mb-3">灰色 = 现状 · 金色虚线 = 渴望</p>
+              <div className="w-full h-72">
+                <ResponsiveContainer>
+                  <RadarChart data={data} cx="50%" cy="50%" outerRadius="65%">
+                    <PolarGrid stroke="#d6d3d1" />
+                    <PolarAngleAxis dataKey="dim" tick={{ fontSize: 12, fill: '#57534e' }} />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar name="现状" dataKey="现状" stroke="#a8a29e" fill="#a8a29e" fillOpacity={0.35} strokeWidth={2} />
+                    <Radar name="渴望" dataKey="渴望" stroke="#b45309" fill="#fbbf24" fillOpacity={0.1} strokeWidth={2.5} strokeDasharray="6 3" />
+                    <Legend wrapperStyle={{ fontSize: 11, paddingTop: 4 }} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </motion.div>
 
-            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5 }, className: "px-5 mb-6" ,}
-              , _react2.default.createElement('h3', { className: "font-semibold mb-3 tracking-wide text-sm"   ,}, "五维对照")
-              , _react2.default.createElement('div', { className: "bg-white rounded-2xl p-5 shadow-sm"   ,}
-                , _react2.default.createElement('div', { className: "flex items-center justify-center gap-6 mb-5"    ,}
-                  , _react2.default.createElement('span', { className: "flex items-center gap-2 text-xs text-stone-500"    ,}, _react2.default.createElement('span', { className: "w-2.5 h-2.5 rounded-full bg-stone-400 inline-block"    ,} ), " 现状" )
-                  , _react2.default.createElement('span', { className: "flex items-center gap-2 text-xs text-amber-600"    ,}, _react2.default.createElement('span', { className: "w-2.5 h-2.5 bg-amber-500 inline-block"   , style: { transform: 'rotate(45deg)' },} ), " 渴望" )
-                )
-                , _react2.default.createElement('div', { className: "space-y-5",}
-                  , DIMS.map((d, idx) => {
+            <DimGuide dims={DIMS} />
+
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="px-5 mb-6">
+              <h3 className="font-semibold mb-3 tracking-wide text-sm">五维对照</h3>
+              <div className="bg-white rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center justify-center gap-6 mb-5">
+                  <span className="flex items-center gap-2 text-xs text-stone-500"><span className="w-2.5 h-2.5 rounded-full bg-stone-400 inline-block" /> 现状</span>
+                  <span className="flex items-center gap-2 text-xs text-amber-600"><span className="w-2.5 h-2.5 bg-amber-500 inline-block" style={{ transform: 'rotate(45deg)' }} /> 渴望</span>
+                </div>
+                <div className="space-y-5">
+                  {DIMS.map((d, idx) => {
                     const cur = sc1[d.key], des = sc2[d.key], gap = Math.max(des - cur, 0);
                     return (
-                      _react2.default.createElement('div', { key: d.key,}
-                        , _react2.default.createElement('div', { className: "flex items-center justify-between mb-2"   ,}
-                          , _react2.default.createElement('span', { className: "text-sm font-medium text-stone-700"  ,}, d.label)
-                          , _react2.default.createElement('div', { className: "text-xs",}, _react2.default.createElement('span', { className: "text-stone-500 font-semibold" ,}, cur), _react2.default.createElement('span', { className: "text-stone-300 mx-1" ,}, "/"), _react2.default.createElement('span', { className: "text-amber-600 font-semibold" ,}, des))
-                        )
-                        , _react2.default.createElement('div', { className: "relative h-5" ,}
-                          , _react2.default.createElement('div', { className: "absolute top-1/2 left-0 right-0 h-px bg-stone-200"     , style: { transform: 'translateY(-50%)' },} )
-                          , [0, 25, 50, 75, 100].map(v => _react2.default.createElement('div', { key: v, className: "absolute w-px h-2 bg-stone-200"   , style: { left: `${v}%`, top: '50%', transform: 'translate(-50%,-50%)' },} ))
-                          , gap > 0 && _react2.default.createElement(_framermotion.motion.div, { className: "absolute h-0.5 bg-amber-200"  , style: { left: `${cur}%`, top: '50%', transform: 'translateY(-50%)' }, initial: { width: 0 }, whileInView: { width: `${gap}%` }, viewport: { once: true }, transition: { duration: 0.6, delay: idx * 0.08 + 0.3 },} )
-                          , _react2.default.createElement(_framermotion.motion.div, { className: "absolute w-3 h-3 rounded-full bg-stone-500 border-2 border-white shadow-sm"       , style: { left: `${cur}%`, top: '50%', transform: 'translate(-50%,-50%)' }, initial: { scale: 0 }, whileInView: { scale: 1 }, viewport: { once: true }, transition: { type: 'spring', delay: idx * 0.08 },} )
-                          , _react2.default.createElement(_framermotion.motion.div, { className: "absolute w-2.5 h-2.5 bg-amber-500 border-2 border-white shadow-sm"      , style: { left: `${des}%`, top: '50%', transform: 'translate(-50%,-50%) rotate(45deg)' }, initial: { scale: 0 }, whileInView: { scale: 1 }, viewport: { once: true }, transition: { type: 'spring', delay: idx * 0.08 + 0.15 },} )
-                        )
-                      )
+                      <div key={d.key}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <span className="text-sm font-medium text-stone-700">{d.label}</span>
+                            <span className="text-xs text-stone-300 ml-2 hidden sm:inline">{d.desc}</span>
+                          </div>
+                          <div className="text-xs"><span className="text-stone-500 font-semibold">{cur}</span><span className="text-stone-300 mx-1">/</span><span className="text-amber-600 font-semibold">{des}</span></div>
+                        </div>
+                        <div className="relative h-5">
+                          <div className="absolute top-1/2 left-0 right-0 h-px bg-stone-200" style={{ transform: 'translateY(-50%)' }} />
+                          {[0, 25, 50, 75, 100].map(v => <div key={v} className="absolute w-px h-2 bg-stone-200" style={{ left: `${v}%`, top: '50%', transform: 'translate(-50%,-50%)' }} />)}
+                          {gap > 0 && <motion.div className="absolute h-0.5 bg-amber-200" style={{ left: `${cur}%`, top: '50%', transform: 'translateY(-50%)' }} initial={{ width: 0 }} whileInView={{ width: `${gap}%` }} viewport={{ once: true }} transition={{ duration: 0.6, delay: idx * 0.08 + 0.3 }} />}
+                          <motion.div className="absolute w-3 h-3 rounded-full bg-stone-500 border-2 border-white shadow-sm" style={{ left: `${cur}%`, top: '50%', transform: 'translate(-50%,-50%)' }} initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ type: 'spring', delay: idx * 0.08 }} />
+                          <motion.div className="absolute w-2.5 h-2.5 bg-amber-500 border-2 border-white shadow-sm" style={{ left: `${des}%`, top: '50%', transform: 'translate(-50%,-50%) rotate(45deg)' }} initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ type: 'spring', delay: idx * 0.08 + 0.15 }} />
+                        </div>
+                      </div>
                     );
-                  })
-                )
-              )
-              , maxGap > 10 && (
-                _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 10 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.4, delay: 0.5 }, className: "bg-amber-50 border border-amber-200 rounded-xl p-4 mt-3"     ,}
-                  , _react2.default.createElement('p', { className: "text-sm text-amber-800" ,}, _react2.default.createElement('span', { className: "font-semibold",}, "💡 关键发现：" ), "「", dl(gapDim), "」是你现状与渴望差距最大的维度（差距 " , maxGap, " 分），这可能是撬动改变最有力的切入点。" )
-                )
-              )
-            )
+                  })}
+                </div>
+              </div>
+              {maxGap > 10 && (
+                <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.5 }} className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-3">
+                  <p className="text-sm text-amber-800"><span className="font-semibold">💡 关键发现：</span>「{dl(gapDim)}」是你现状与渴望差距最大的维度（差距 {maxGap} 分），这可能是撬动改变最有力的切入点。</p>
+                </motion.div>
+              )}
+            </motion.div>
 
-            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5 }, className: "px-5 mb-8" ,}
-              , _react2.default.createElement('h3', { className: "font-semibold mb-3 tracking-wide"  ,}, "核心解读")
-              , _react2.default.createElement('div', { className: "bg-white rounded-2xl p-5 shadow-sm"   ,}, _react2.default.createElement('p', { className: "text-sm leading-loose text-stone-600"  ,}, interp))
-            )
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="px-5 mb-8">
+              <h3 className="font-semibold mb-3 tracking-wide">核心解读</h3>
+              <div className="bg-white rounded-2xl p-5 shadow-sm"><p className="text-sm leading-loose text-stone-600">{interp}</p></div>
+            </motion.div>
 
-            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5 }, className: "px-5 mb-10" ,}
-              , _react2.default.createElement('h3', { className: "font-semibold mb-3 tracking-wide"  ,}, "撬动改变的第一步")
-              , _react2.default.createElement('div', { className: "space-y-3",}, sugg.map((s, i) => (
-                _react2.default.createElement('div', { key: i, className: "bg-white rounded-2xl p-5 shadow-sm"   ,}
-                  , _react2.default.createElement('p', { className: "font-medium text-sm mb-2 text-amber-800"   ,}, s.title)
-                  , _react2.default.createElement('p', { className: "text-sm leading-loose text-stone-600"  ,}, s.text)
-                )
-              )))
-            )
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="px-5 mb-10">
+              <h3 className="font-semibold mb-3 tracking-wide">撬动改变的第一步</h3>
+              <div className="space-y-3">{sugg.map((s, i) => (
+                <div key={i} className="bg-white rounded-2xl p-5 shadow-sm">
+                  <p className="font-medium text-sm mb-2 text-amber-800">{s.title}</p>
+                  <p className="text-sm leading-loose text-stone-600">{s.text}</p>
+                </div>
+              ))}</div>
+            </motion.div>
 
-            , _react2.default.createElement(_framermotion.motion.div, { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { duration: 0.5 }, className: "px-5 text-center" ,}
-              , _react2.default.createElement('div', { className: "border-t border-stone-200 pt-8 mb-4"   ,}
-                , _react2.default.createElement('div', { className: "flex gap-3 justify-center"  ,}
-                  , _react2.default.createElement('button', { onClick: () => setShowPoster(true), className: "flex-1 max-w-40 flex items-center justify-center gap-2 bg-stone-800 text-amber-50 py-3 rounded-full text-sm tracking-widest hover:bg-stone-700 transition-colors shadow-lg"              ,}, _react2.default.createElement(_lucidereact.Share2, { size: 15,} ), " 生成海报" )
-                  , _react2.default.createElement('button', { onClick: restart, className: "flex-1 max-w-40 flex items-center justify-center gap-2 border border-stone-300 text-stone-600 py-3 rounded-full text-sm tracking-widest hover:bg-stone-100 transition-colors"              ,}, _react2.default.createElement(_lucidereact.RotateCcw, { size: 15,} ), " 重新探索" )
-                )
-              )
-              , _react2.default.createElement('p', { className: "text-xs text-stone-400 mt-4"  ,}, "⚠️ 刷新页面后结果将丢失，建议先保存海报" )
-              , _react2.default.createElement('div', { className: "w-8 h-px bg-stone-300 mx-auto mb-4 mt-4"     ,} )
-              , _react2.default.createElement('p', { className: "text-xs text-stone-400 tracking-wider"  ,}, "寻找你的生命支点 · 2026"  )
-              , _react2.default.createElement('p', { className: "text-xs text-stone-300 mt-1.5 tracking-wider"   ,}, "© 安清酉 AnQingYou"  )
-            )
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="px-5 text-center">
+              <div className="border-t border-stone-200 pt-8 mb-4">
+                <div className="flex gap-3 justify-center">
+                  <button onClick={() => setShowPoster(true)} className="flex-1 max-w-40 flex items-center justify-center gap-2 bg-stone-800 text-amber-50 py-3 rounded-full text-sm tracking-widest hover:bg-stone-700 transition-colors shadow-lg"><Share2 size={15} /> 生成海报</button>
+                  <button onClick={restart} className="flex-1 max-w-40 flex items-center justify-center gap-2 border border-stone-300 text-stone-600 py-3 rounded-full text-sm tracking-widest hover:bg-stone-100 transition-colors"><RotateCcw size={15} /> 重新探索</button>
+                </div>
+              </div>
+              <p className="text-xs text-stone-400 mt-4">⚠️ 刷新页面后结果将丢失，建议先保存海报</p>
+              <div className="w-8 h-px bg-stone-300 mx-auto mb-4 mt-4" />
+              <p className="text-xs text-stone-400 tracking-wider">寻找你的生命支点 · 2026</p>
+              <p className="text-xs text-stone-300 mt-1.5 tracking-wider">© 安清酉 AnQingYou</p>
+            </motion.div>
 
-            , _react2.default.createElement(_framermotion.AnimatePresence, null
-              , showPoster && _react2.default.createElement(PosterModal, { type: getType(sc1, sc2), sc1: sc1, sc2: sc2, interp: getInterp(sc1, sc2), onClose: () => setShowPoster(false),} )
-            )
-          )
+            <AnimatePresence>
+              {showPoster && <PosterModal type={getType(sc1, sc2)} sc1={sc1} sc2={sc2} interp={getInterp(sc1, sc2)} onClose={() => setShowPoster(false)} />}
+            </AnimatePresence>
+          </div>
         );
-      })()
-    )
+      })()}
+    </div>
   );
-} exports.default = App;
-</script></head>
-  <body>
-  
-
-<div id="preview-app"></div></body></html>
+}
